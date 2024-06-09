@@ -10,14 +10,20 @@ export const BulkInsertExtension = Prisma.defineExtension({
       async createBulk<T, D>(
         this: T,
         args: Prisma.Exact<D, Prisma.Args<T, 'createManyAndReturn'>> & {
-          concurrency: number;
+          /**
+           * 병렬로 실행할 작업의 수 (동시에 시작하는 트랜잭션의 수, 커넥션 풀의 크기보다 작아야 함)
+           */
+          concurrency?: number;
+          /**
+           * 한 번에 처리할 데이터의 양 (동시에 삽입되는 데이터의 양 = bulkSize * concurrency)
+           */
           bulkSize: number;
         },
       ) {
         const ctx = Prisma.getExtensionContext(this);
         const data = (args as any).data as any[];
         const select = (args as any).select as any;
-        const concurrency = args.concurrency;
+        const concurrency = args.concurrency ?? 1;
         const bulkSize = args.bulkSize;
         const name = ctx.$name;
 
