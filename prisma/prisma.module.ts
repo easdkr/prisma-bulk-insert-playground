@@ -1,9 +1,21 @@
 import { Global, Module } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaFactory } from './factory';
+
+export const PRISMA_TOKEN = '__PRISMA_TOKEN__';
 
 @Global()
-@Module({
-  providers: [PrismaService],
-  exports: [PrismaService],
-})
-export class PrismaModule {}
+@Module({})
+export class PrismaModule {
+  static forRoot() {
+    return {
+      module: PrismaModule,
+      providers: [
+        {
+          provide: PRISMA_TOKEN,
+          useValue: PrismaFactory.createExtended(),
+        },
+      ],
+      exports: [PRISMA_TOKEN],
+    };
+  }
+}
