@@ -23,7 +23,9 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@prisma/client": "5.15.0",
     "fp-ts": "^2.16.6",
+    "prisma": "^5.15.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
