@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { flatten } from 'fp-ts/lib/Array';
 import { pipe } from 'fp-ts/lib/function';
 import { chunksOf } from 'fp-ts/lib/ReadonlyArray';
 import { IterableJobQueue } from 'libs/job';
@@ -32,8 +33,13 @@ export const BulkInsertExtension = Prisma.defineExtension({
         console.timeEnd('job 생성 시간');
 
         console.time('쿼리 실행 시간');
-        await IterableJobQueue.of(concurrency).execute(jobs);
+        const res = await IterableJobQueue.of(concurrency)
+          .execute(jobs)
+          // createManyAndReturn의 반환값이 배열의 배열이므로 flatten을 사용하여 1차원 배열로 변환
+          .then(flatten);
         console.timeEnd('쿼리 실행 시간');
+
+        return res;
       },
     },
   },
