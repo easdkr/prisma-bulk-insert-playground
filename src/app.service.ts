@@ -9,15 +9,15 @@ export class AppService {
     private readonly prisma: PrismaService,
   ) {}
 
-  public bulkCreateUsers = async () => {
+  public bulkCreateUsers = async (length: number) => {
     await this.prisma.user.createBulk({
-      data: Array.from({ length: 100 }).map((_, i) => ({
+      data: Array.from({ length }).map((_, i) => ({
         email: `email ${i}`,
         name: `name ${i}`,
         password: `password ${i}`,
       })),
-      concurrency: 3,
-      bulkSize: 7,
+      concurrency: 10,
+      bulkSize: 100,
     });
   };
 }

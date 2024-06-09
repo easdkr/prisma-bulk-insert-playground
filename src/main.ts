@@ -12,7 +12,7 @@ async function bootstrap() {
 
   const prisma: PrismaService = app.get(PRISMA_TOKEN);
   const appService = app.get(AppService);
-  await appService.bulkCreateUsers();
+  await appService.bulkCreateUsers(10000);
 
   console.log('생성된 유저 수 : ', await prisma.user.count());
   await prisma.$queryRaw`TRUNCATE users RESTART IDENTITY CASCADE`;
