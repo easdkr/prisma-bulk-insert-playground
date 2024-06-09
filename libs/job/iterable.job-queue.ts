@@ -38,7 +38,7 @@ export class IterableJobQueue<T> implements JobQueue<T> {
     const result: T[] = [];
 
     for await (const value of iterable) {
-      console.log('value:', value);
+      // console.log('value:', value);
       result.push(value);
     }
 

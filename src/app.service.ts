@@ -10,7 +10,7 @@ export class AppService {
   ) {}
 
   public bulkCreateUsers = async (length: number) => {
-    await this.prisma.user.createBulk({
+    const bulkCreateResult = await this.prisma.user.createBulk({
       data: Array.from({ length }).map((_, i) => ({
         email: `email ${i}`,
         name: `name ${i}`,
@@ -20,5 +20,7 @@ export class AppService {
       concurrency: 10,
       bulkSize: 100,
     });
+    console.log('생성된 유저 수 : ', bulkCreateResult.length);
+    return bulkCreateResult;
   };
 }
