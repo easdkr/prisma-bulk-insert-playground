@@ -16,6 +16,7 @@ export class AppService {
         name: `name ${i}`,
         password: `password ${i}`,
       })),
+      select: { id: true },
       concurrency: 10,
       bulkSize: 100,
     });
