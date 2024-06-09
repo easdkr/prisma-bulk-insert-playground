@@ -10,6 +10,10 @@ import {
   type Task,
 } from 'fp-ts/lib/Task';
 
+/**
+ * @deprecated
+ * 사용하지 않음
+ */
 export class FunctionalJobQueue<T> implements JobQueue<T> {
   private constructor(private readonly concurrency: number) {}
 

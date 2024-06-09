@@ -1,5 +1,9 @@
 import type { JobQueue } from './job-queue.interface';
 
+/**
+ * @deprecated
+ * 사용하지 않음
+ */
 export class ProceduralJobQueue<T> implements JobQueue<T> {
   private constructor(private readonly concurrency: number) {}
 
