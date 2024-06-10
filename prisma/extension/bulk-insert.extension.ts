@@ -22,21 +22,14 @@ export const BulkInsertExtension = Prisma.defineExtension({
         },
       ) {
         const ctx = Prisma.getExtensionContext(this);
-        const data = (args as any).data as any[];
-        const select = (args as any).select as any;
-        const concurrency = args.concurrency ?? 1;
-        const bulkSize = args.bulkSize;
-        const name = ctx.$name;
+        const { concurrency, bulkSize, ...rest } = args as any;
 
-        console.time('job 생성 시간');
-        const jobs = _createJobs(ctx, name, data, select, bulkSize);
-        console.timeEnd('job 생성 시간');
+        const jobs = _createJobs(ctx, bulkSize, rest);
 
         console.time('쿼리 실행 시간');
-        const res = await IterableJobQueue.of(concurrency)
+        const res = await IterableJobQueue.of(concurrency ?? 1)
           .execute(jobs)
-          // createManyAndReturn의 반환값이 배열의 배열이므로 flatten을 사용하여 1차원 배열로 변환
-          .then(flatten);
+          .then(flatten); // createManyAndReturn의 반환값이 배열의 배열이므로 flatten을 사용하여 1차원 배열로 변환
         console.timeEnd('쿼리 실행 시간');
 
         return res;
@@ -45,18 +38,19 @@ export const BulkInsertExtension = Prisma.defineExtension({
   },
 });
 
-// TODO: 위치 및 이름 변경, 파라미터 객체화
 function _createJobs(
   ctx: any,
-  name: string,
-  data: any[],
-  select: any,
   bulkSize: number,
+  createManyAndReturnArgs: Prisma.Args<any, 'createManyAndReturn'>,
 ) {
-  return pipe(data, chunksOf(bulkSize), (chunks) =>
+  return pipe(createManyAndReturnArgs.data, chunksOf(bulkSize), (chunks) =>
     chunks.map(
       (chunk) => () =>
-        ctx.$parent[name].createManyAndReturn({ data: chunk, select }),
+        ctx.$parent[ctx.$name].createManyAndReturn({
+          data: chunk,
+          select: createManyAndReturnArgs.select,
+          skipDuplicates: createManyAndReturnArgs.skipDuplicates,
+        }),
     ),
   );
 }
